@@ -7,28 +7,35 @@ Rectangle {
         id: contactModel
         ListElement {
             name: "Jim Williams"
-//            portrait: "pics/portrait.png"
+            portrait: "../../img/image/pic.png"
         }
         ListElement {
             name: "John Brown"
-//            portrait: "pics/portrait.png"
+            portrait: "../../img/image/pic.png"
         }
         ListElement {
             name: "PJHubs"
-//            portrait: "pics/portrait.png"
+            portrait: "../../img/image/pic.png"
         }
     }
     GridView {
         width: parent.width
         height: parent.heigh
-        cellWidth: parent.width / 2 - 10
-        cellHeight: 30
+        cellWidth: 60
+        cellHeight: 50
         model: contactModel
         delegate: Column {
-//            Image { source: portrait; anchors.horizontalCenter: parent.horizontalCenter }
+            Image {
+                width: 50
+                height: 50
+                source: portrait
+                anchors.horizontalCenter: parent.horizontalCenter
+            }
             Text {
+                width: 50
                 color: "white"
-                text: name;
+                text: name
+                elide: Text.ElideRight
                 anchors.horizontalCenter: parent.horizontalCenter
             }
         }

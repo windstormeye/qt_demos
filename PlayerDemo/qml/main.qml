@@ -6,10 +6,13 @@ Window {
     height: 480
     visible: true
     title: qsTr("VideoEditorPlayer")
+    color: "black"
+
 
     Row {
         anchors.fill: parent
-        spacing: 0
+        anchors.margins: 10
+        spacing: 10
 
         Player {
             id: player
@@ -21,7 +24,7 @@ Window {
 
         Gallery {
             id: gallery
-            width: parent.width * 0.3
+            width: parent.width * 0.3 - 10
             height: parent
             anchors.top: parent.top
             anchors.bottom: parent.bottom

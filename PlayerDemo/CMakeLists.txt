@@ -7,15 +7,19 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_AUTOUIC ON)
 
-file(GLOB source_files *.c *.cpp *.qrc)
-file(GLOB header_files *.h *.hpp *.txt)
-
 find_package(Qt6 6.2 COMPONENTS Quick REQUIRED)
 find_package(Qt6 6.2 COMPONENTS Multimedia REQUIRED)
+
+file(GLOB_RECURSE source_files *.c *.cpp)
+file(GLOB_RECURSE header_files *.h *.hpp)
+
+include_directories(${header_files})
 
 qt_add_executable(appPlayerDemo
     main.cpp
     qml.qrc
+    ${source_files}
+    ${header_files}
 )
 
 #qt_add_qml_module(appPlayerDemo

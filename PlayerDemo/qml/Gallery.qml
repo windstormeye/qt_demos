@@ -1,4 +1,5 @@
 import QtQuick 2.0
+import Qt5Compat.GraphicalEffects
 import com.pjhubs.asset 1.0
 
 
@@ -6,86 +7,54 @@ Rectangle {
     color: Qt.rgba(20/255, 20/255, 20/255, 1)
     radius: 5
 
-//    ListModel {
-//        id: contactModel
-//        ListElement {
-//            name: "Jim Williams"
-//            portrait: "../../img/image/pic.png"
-//        }
-//        ListElement {
-//            name: "John Brown"
-//            portrait: "../../img/image/pic.png"
-//        }
-//        ListElement {
-//            name: "PJHubs"
-//            portrait: "../../img/image/pic.png"
-//        }
-//        ListElement {
-//            name: "YiYiMay"
-//            portrait: "../../img/image/pic.png"
-//        }
-//        ListElement {
-//            name: "233333333333"
-//            portrait: "../../img/image/pic.png"
-//        }
-//        ListElement {
-//            name: "233333333333"
-//            portrait: "../../img/image/pic.png"
-//        }
-//        ListElement {
-//            name: "233333333333"
-//            portrait: "../../img/image/pic.png"
-//        }
-//        ListElement {
-//            name: "233333333333"
-//            portrait: "../../img/image/pic.png"
-//        }
-//        ListElement {
-//            name: "233333333333"
-//            portrait: "../../img/image/pic.png"
-//        }
-//        ListElement {
-//            name: "233333333333"
-//            portrait: "../../img/image/pic.png"
-//        }
-//        ListElement {
-//            name: "233333333333"
-//            portrait: "../../img/image/pic.png"
-//        }
-//        ListElement {
-//            name: "233333333333"
-//            portrait: "../../img/image/pic.png"
-//        }
-//    }
-
     Component {
         id: cell
         Column {
             spacing: 5
             width: listView.cellWidth - listView.marginValue
+
+                Image {
+                    id: coverImg
+                    height: 50
+                    width: parent.width
+                    source: asset.coverImage
+                    visible: false
+                }
+
                 Rectangle {
                     id: coverContainer
-                    radius: 10
-                    width: parent.width
+                    width: coverImg.width
                     height: 50
-                    Image {
-                        id: coverImg
-                        anchors.fill: parent
-                        source: coverImage
-                    }
+                    radius: 5
+                    visible: false
                 }
+
+                OpacityMask {
+                    id: mask
+                    width: parent.width
+                    height: coverImg.height
+                    source: coverImg
+                    maskSource: coverContainer
+                }
+
+
                 Text {
                     id: coverTitle
-                    width: coverContainer.width
+                    width: coverImg.width
                     height: 10
                     color: "white"
-                    text: name
+                    text: asset.name
                     elide: Text.ElideRight
                 }
         }
     }
 
-    required property VideoAssetModel videoModel: VideoAssetModel{}
+    //TODO: 这种方式是为什么呢？
+//    required property VideoAssetModel videoModel: VideoAssetModel{}
+
+    VideoAssetModel {
+        id: videoModel
+    }
 
     GridView {
         id: listView
@@ -101,13 +70,15 @@ Rectangle {
         model: videoModel
         delegate: cell
 
-        Component.onCompleted: model.loadAssets()
+        Component.onCompleted: {
+            videoModel.loadAssets()
+        }
 
         DropArea {
             anchors.fill: parent
             onDropped: (drop) => {
-                           for(var i = 0; i<drop.urls.length; i++) {
-                               console.log(drop.urls[i]);
+                           for (var i = 0; i < drop.urls.length; i++) {
+                               videoModel.addVideo(drop.urls[i]);
                            }
                        }
         }

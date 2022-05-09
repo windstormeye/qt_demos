@@ -19,9 +19,7 @@ public:
     Q_INVOKABLE void addVideo(const QString &url);
     Q_INVOKABLE void removeVideo(int index);
     Q_INVOKABLE void loadAssets();
-    void storeAssets();
 
-    // Basic functionality:
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
 
     QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const override;
@@ -30,6 +28,8 @@ public:
 
 private:
     QList<QSharedPointer<VideoAsset>> m_datas;
+    QString fileName(const QString urlString);
+    void storeAssets();
 };
 
 #endif // VIDEOASSETMODEL_H

@@ -1,6 +1,8 @@
 #include "videoassetmodel.h"
+#include "../../helper/videoinfofetcher.h"
 
 #include <QFile>
+#include <QDir>
 
 VideoAssetModel::VideoAssetModel(QObject *parent)
     : QAbstractListModel(parent)
@@ -9,14 +11,33 @@ VideoAssetModel::VideoAssetModel(QObject *parent)
 
 void VideoAssetModel::addVideo(const QString &url)
 {
-    auto rowCount = m_datas.count();
-    beginInsertRows(QModelIndex(), rowCount, rowCount);
-    // TODO: 完善构造函数
-    auto asset = QSharedPointer<VideoAsset>(new VideoAsset());
-    m_datas.append(asset);
-    endInsertRows();
+    VideoInfoFetcher::fetchFirstFrameWithVideoUrl(url, [=] (const QImage &coverImage) {
+        auto rowCount = m_datas.count();
+        beginInsertRows(QModelIndex(), rowCount, rowCount);
+        QString urlFileName = fileName(url);
 
-    storeAssets();
+        QString coverDirPath = QDir::currentPath() + "/cover_image";
+        QDir dir;
+        if (!dir.exists(coverDirPath)) {
+            dir.mkdir(coverDirPath);
+        }
+        QString coverImageFilePath = QDir::currentPath() + "/cover_image/" + urlFileName + ".jpg";
+        coverImage.save(coverImageFilePath, "jpg", -1);
+
+        // NOTE: 加上前缀 "file://" 可通过本地文件的方式加载，默认 "qrc://" 方式找图
+        auto asset = QSharedPointer<VideoAsset>(new VideoAsset(urlFileName, url, "file://" + coverImageFilePath));
+        m_datas.append(asset);
+        endInsertRows();
+
+        storeAssets();
+    });
+}
+
+/// 通过 url 获取资源名
+QString VideoAssetModel::fileName(const QString urlString) {
+    QStringList strings = urlString.split("/");
+    // NOTE: / 分割后取最后一段，再 . 分割后取最后一段
+    return strings.last().split(".").first();
 }
 
 void VideoAssetModel::removeVideo(int index)
@@ -56,8 +77,6 @@ void VideoAssetModel::storeAssets() {
 
 int VideoAssetModel::rowCount(const QModelIndex &parent) const
 {
-    // For list models only the root node (an invalid parent) should return the list's size. For all
-    // other (valid) parents, rowCount() should return 0 so that it does not become a tree model.
     if (parent.isValid())
         return 0;
 

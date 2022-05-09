@@ -9,7 +9,7 @@ class VideoInfoFetcher
 public:
     VideoInfoFetcher();
 
-    bool fetchFirstFrameWithVideoUrl(const QString& url, std::function<void(const QImage&)> callback);
+    static bool fetchFirstFrameWithVideoUrl(const QString& url, std::function<void(const QImage&)> callback);
 };
 
 #endif // VIDEOINFOFETCHER_H

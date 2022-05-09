@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 7.0.0, 2022-04-28T18:54:07. -->
+<!-- Written by QtCreator 7.0.0, 2022-05-09T17:01:19. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -106,6 +106,7 @@
 -DCMAKE_PREFIX_PATH:PATH=%{Qt:QT_INSTALL_PREFIX}
 -DCMAKE_C_COMPILER:FILEPATH=%{Compiler:Executable:C}
 -DCMAKE_CXX_COMPILER:FILEPATH=%{Compiler:Executable:Cxx}
+-DCMAKE_GENERATOR:STRING=Ninja
 %{CMAKE_OSX_ARCHITECTURES:DefaultFlag}</value>
     <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory">/Users/bytedance/Documents/qt_demos/build-PlayerDemo-Qt_6_3_0_for_macOS-Debug</value>
     <valuemap type="QVariantMap" key="ProjectExplorer.BuildConfiguration.BuildStepList.0">

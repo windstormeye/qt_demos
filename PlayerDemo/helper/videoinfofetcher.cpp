@@ -20,13 +20,14 @@ bool VideoInfoFetcher::fetchFirstFrameWithVideoUrl(const QString &url, std::func
     sharedPlayer()->setSource(QUrl(url));
     auto sink = new QVideoSink;
     sharedPlayer()->setVideoSink(sink);
-    // TODO: 神奇的。。
+
     QObject::connect(sink, &QVideoSink::videoFrameChanged, sharedPlayer(), [=] (const QVideoFrame &frame) {
         if (frame.isValid()) {
             sharedPlayer()->stop();
             callback(frame.toImage());
         }
     }, Qt::QueuedConnection);
+
     sharedPlayer()->play();
     return true;
 }

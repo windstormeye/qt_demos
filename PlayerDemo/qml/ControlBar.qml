@@ -11,12 +11,12 @@ Rectangle {
     property string currentTime: "00:00"
     property string totalTime: "00:00"
     function changePlayrState() {
+        this.isPlay = !this.isPlay
         if (this.isPlay) {
             playButtonImg.source = "qrc:/img/image/player-pause.png"
         } else {
             playButtonImg.source = "qrc:/img/image/player-play.png"
         }
-        this.isPlay = !this.isPlay
     }
 
     id: root

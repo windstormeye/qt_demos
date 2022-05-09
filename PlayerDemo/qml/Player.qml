@@ -26,5 +26,12 @@ Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 10
+        onPlayButtonClicked: {
+            if (controlBar.isPlay) {
+                video.play()
+            } else {
+                video.pause()
+            }
+        }
     }
 }

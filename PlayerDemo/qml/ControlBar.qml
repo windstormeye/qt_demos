@@ -3,7 +3,23 @@ import QtQuick.Controls 2.0
 import Qt5Compat.GraphicalEffects
 
 Rectangle {
-    id: controlBar
+    signal playButtonClicked()
+
+    /// 是否播放
+    property bool isPlay: false
+    /// 当前播放进度
+    property string currentTime: "00:00"
+    property string totalTime: "00:00"
+    function changePlayrState() {
+        if (this.isPlay) {
+            playButtonImg.source = "qrc:/img/image/player-pause.png"
+        } else {
+            playButtonImg.source = "qrc:/img/image/player-play.png"
+        }
+        this.isPlay = !this.isPlay
+    }
+
+    id: root
     width: parent.width
     height: parent.height
     radius: 10
@@ -63,6 +79,14 @@ Rectangle {
                         color: "white"
                     }
                 }
+
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        changePlayrState()
+                        root.playButtonClicked()
+                    }
+                }
             }
 
             Rectangle {
@@ -98,7 +122,7 @@ Rectangle {
             ProgressBar {
                 id: progress
                 value: 0.7
-                width: controlBar.width * 0.7
+                width: root.width * 0.7
                 height: 20
             }
 

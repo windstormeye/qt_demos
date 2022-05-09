@@ -3,6 +3,7 @@
         <file>qml/Gallery.qml</file>
         <file>qml/main.qml</file>
         <file>qml/Player.qml</file>
+        <file>qml/ControlBar.qml</file>
     </qresource>
     <qresource prefix="/img">
         <file>image/pic.png</file>

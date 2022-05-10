@@ -8,8 +8,10 @@ Rectangle {
     /// 是否播放
     property bool isPlay: false
     /// 当前播放进度
-    property string currentTime: "00:00"
-    property string totalTime: "00:00"
+    property double currentTime: 0
+    property double totalTime: 0
+    property double progressValue: 0
+
     function changePlayrState() {
         this.isPlay = !this.isPlay
         if (this.isPlay) {
@@ -17,6 +19,25 @@ Rectangle {
         } else {
             playButtonImg.source = "qrc:/img/image/player-play.png"
         }
+    }
+
+    function changeProgressValue(progressValue) {
+        progressBar.value = progressValue
+    }
+
+    function formatterTime(time) {
+        let seconds = parseInt(time / 1000)
+        let mins = parseInt(time / 1000 / 60)
+
+        if (seconds < 10) {
+            seconds = "0" + seconds
+        }
+
+        if (mins < 9) {
+            mins = "0" + mins
+        }
+
+        return mins + ":" + seconds
     }
 
     id: root
@@ -114,21 +135,21 @@ Rectangle {
         }
 
         Row {
-            id: progreessBar
+            id: progreessBarContainer
             height: parent.height / 2
             spacing: 10
             anchors.horizontalCenter: parent.horizontalCenter
 
             ProgressBar {
-                id: progress
-                value: 0.7
+                id: progressBar
+                value: progressValue
                 width: root.width * 0.7
                 height: 20
             }
 
             Label {
-                text: "00:00:00"
-                anchors.verticalCenter: progress.verticalCenter
+                text: formatterTime(currentTime) + "/" + formatterTime(totalTime)
+                anchors.verticalCenter: progressBar.verticalCenter
             }
         }
     }

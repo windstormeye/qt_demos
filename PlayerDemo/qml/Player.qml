@@ -1,6 +1,5 @@
 import QtQuick 2.0
-import QtMultimedia 5.15
-
+import QtMultimedia
 
 Rectangle {
     color: Qt.rgba(20/255, 20/255, 20/255, 1)
@@ -10,6 +9,32 @@ Rectangle {
         id: video
         anchors.fill: parent
         source: ""
+
+        onPositionChanged: {
+            controlBar.currentTime = video.position
+            controlBar.changeProgressValue(video.position / video.duration)
+        }
+
+        onDurationChanged: {
+            controlBar.totalTime = video.duration
+        }
+
+        onPlaybackStateChanged: {
+            if (video.playbackState === MediaPlayer.StoppedState) {
+                controlBar.visible = false
+            }
+        }
+
+        MouseArea {
+            anchors.fill: parent
+            hoverEnabled: true
+            onPositionChanged: {
+                if (video.playbackState === MediaPlayer.PlayingState) {
+                    controlBar.visible = true
+                    controlBarTimer.start()
+                }
+            }
+        }
     }
 
     ControlBar {
@@ -19,6 +44,7 @@ Rectangle {
         anchors.horizontalCenter: parent.horizontalCenter
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 10
+        visible: false
         onPlayButtonClicked: {
             if (video.source === "") {
                 return
@@ -31,11 +57,25 @@ Rectangle {
         }
     }
 
+    Timer {
+        id: controlBarTimer
+        interval: 4000
+        repeat: false
+        running: false
+        onTriggered: {
+            controlBar.visible = false
+        }
+    }
+
     function playWithVideoUrl(videoUrl) {
         video.source = videoUrl
         video.play()
         if (controlBar.isPlay === false) {
             controlBar.changePlayrState()
         }
+
+        // NOTE: 切换视频时 controlBar 可展示
+        controlBar.visible = true
+        controlBarTimer.start()
     }
 }

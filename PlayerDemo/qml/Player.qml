@@ -9,14 +9,7 @@ Rectangle {
     Video {
         id: video
         anchors.fill: parent
-        source: "file:///Users/bytedance/Desktop/qt_demo_素材/Sea\ -\ 7741.mp4"
-        focus: true
-        MouseArea {
-             anchors.fill: parent
-             onClicked: {
-                 video.play()
-             }
-         }
+        source: ""
     }
 
     ControlBar {
@@ -27,11 +20,22 @@ Rectangle {
         anchors.bottom: parent.bottom
         anchors.bottomMargin: 10
         onPlayButtonClicked: {
+            if (video.source === "") {
+                return
+            }
             if (controlBar.isPlay) {
                 video.play()
             } else {
                 video.pause()
             }
+        }
+    }
+
+    function playWithVideoUrl(videoUrl) {
+        video.source = videoUrl
+        video.play()
+        if (controlBar.isPlay === false) {
+            controlBar.changePlayrState()
         }
     }
 }

@@ -28,6 +28,9 @@ Window {
             height: parent
             anchors.top: parent.top
             anchors.bottom: parent.bottom
+            onSelectedVideo:(videoUrl) => {
+                player.playWithVideoUrl(videoUrl)
+            }
         }
     }
 }

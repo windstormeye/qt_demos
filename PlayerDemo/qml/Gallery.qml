@@ -4,6 +4,9 @@ import com.pjhubs.asset 1.0
 
 
 Rectangle {
+
+    signal selectedVideo(string videoUrl)
+
     color: Qt.rgba(20/255, 20/255, 20/255, 1)
     radius: 5
 
@@ -13,39 +16,47 @@ Rectangle {
             spacing: 5
             width: listView.cellWidth - listView.marginValue
 
-                Image {
-                    id: coverImg
-                    height: 50
-                    width: parent.width
-                    source: asset.coverImage
-                    visible: false
-                }
+            Image {
+                id: coverImg
+                height: 50
+                width: parent.width
+                source: asset.coverImage
+                visible: false
+            }
 
-                Rectangle {
-                    id: coverContainer
-                    width: coverImg.width
-                    height: 50
-                    radius: 5
-                    visible: false
-                }
+            Rectangle {
+                id: coverContainer
+                width: coverImg.width
+                height: 50
+                radius: 5
+                visible: false
+            }
 
-                OpacityMask {
-                    id: mask
-                    width: parent.width
-                    height: coverImg.height
-                    source: coverImg
-                    maskSource: coverContainer
+            OpacityMask {
+                id: mask
+                width: parent.width
+                height: coverImg.height
+                source: coverImg
+                maskSource: coverContainer
+
+                MouseArea {
+                    width: listView.cellWidth
+                    height: listView.cellHeight
+                    onClicked: {
+                        selectedVideo(asset.url)
+                    }
                 }
+            }
 
 
-                Text {
-                    id: coverTitle
-                    width: coverImg.width
-                    height: 10
-                    color: "white"
-                    text: asset.name
-                    elide: Text.ElideRight
-                }
+            Text {
+                id: coverTitle
+                width: coverImg.width
+                height: 10
+                color: "white"
+                text: asset.name
+                elide: Text.ElideRight
+            }
         }
     }
 

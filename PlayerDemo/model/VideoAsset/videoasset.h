@@ -20,6 +20,7 @@ public:
 
     const QDataStream &read(QDataStream &in);
     const QDataStream &write(QDataStream &out);
+    const void setCoverImageUrl(const QString coverImageUrl);
 
 signals:
 

@@ -16,7 +16,7 @@ class VideoAssetModel : public QAbstractListModel
 public:
     explicit VideoAssetModel(QObject *parent = nullptr);
 
-    Q_INVOKABLE void addVideo(const QString &url);
+    Q_INVOKABLE void addVideos(const QString &urls);
     Q_INVOKABLE void removeVideo(int index);
     Q_INVOKABLE void loadAssets();
 

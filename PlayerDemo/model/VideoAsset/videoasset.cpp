@@ -33,6 +33,11 @@ const QDataStream &VideoAsset::write(QDataStream &out)
     return out;
 }
 
+const void VideoAsset::setCoverImageUrl(const QString coverImageUrl)
+{
+    m_coverImage = coverImageUrl;
+}
+
 VideoAsset::VideoAsset(const QString &name, const QString &url, const QString &coverImage) : m_name(name),
     m_url(url),
     m_coverImage(coverImage)

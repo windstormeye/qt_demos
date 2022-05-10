@@ -10,8 +10,13 @@ Rectangle {
     color: Qt.rgba(20/255, 20/255, 20/255, 1)
     radius: 5
 
+    VideoAssetModel {
+        id: videoModel
+    }
+
     Component {
         id: cell
+
         Column {
             spacing: 5
             width: listView.cellWidth - listView.marginValue
@@ -42,9 +47,18 @@ Rectangle {
                 MouseArea {
                     width: listView.cellWidth
                     height: listView.cellHeight
-                    onClicked: {
-                        selectedVideo(asset.url)
-                    }
+                    acceptedButtons: Qt.LeftButton | Qt.RightButton
+                    onClicked: (mouse) => {
+                                   if (mouse.button === Qt.LeftButton) {
+                                       selectedVideo(asset.url)
+                                   }
+                                   if (mouse.button === Qt.RightButton) {
+                                       mouseMenu.x = mouseX
+                                       mouseMenu.y = mouseY
+                                       mouseMenu.visible = true
+                                       mouseMenu.cellIndex = index
+                                   }
+                               }
                 }
             }
 
@@ -58,10 +72,6 @@ Rectangle {
                 elide: Text.ElideRight
             }
         }
-    }
-
-    VideoAssetModel {
-        id: videoModel
     }
 
     GridView {
@@ -85,10 +95,56 @@ Rectangle {
         DropArea {
             anchors.fill: parent
             onDropped: (drop) => {
+                           var videoUrls = ""
                            for (var i = 0; i < drop.urls.length; i++) {
-                               videoModel.addVideo(drop.urls[i]);
+                               videoUrls += drop.urls[i]
+
+                               if (i != drop.urls.length - 1) {
+                                   videoUrls += ","
+                               }
                            }
+                           videoModel.addVideos(videoUrls)
                        }
+        }
+
+        Rectangle {
+            property int cellIndex: 0
+
+            id: mouseMenu
+            width: 80
+            height: 60
+            radius: 5
+            color: Qt.rgba(40/255, 40/255, 40/255, 1)
+            visible: false
+
+            Text {
+                id: deleteItem
+                text: qsTr("删除")
+                color: "white"
+                anchors.left: parent.left
+                anchors.leftMargin: 10
+                anchors.topMargin: 10
+                anchors.top: parent.top
+
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        console.log(mouseMenu.cellIndex)
+                        videoModel.removeVideo(mouseMenu.cellIndex)
+                        mouseMenu.visible = false
+                    }
+                }
+            }
+
+            Text {
+                id: copyItem
+                text: qsTr("复制")
+                color: "white"
+                anchors.left: parent.left
+                anchors.leftMargin: 10
+                anchors.topMargin: 10
+                anchors.top: deleteItem.bottom
+            }
         }
     }
 }

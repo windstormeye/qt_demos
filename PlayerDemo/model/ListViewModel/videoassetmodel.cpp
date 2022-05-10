@@ -4,33 +4,46 @@
 #include <QFile>
 #include <QDir>
 
+#include <iostream>
+
 VideoAssetModel::VideoAssetModel(QObject *parent)
     : QAbstractListModel(parent)
 {
 }
 
-void VideoAssetModel::addVideo(const QString &url)
+void VideoAssetModel::addVideos(const QString &urls)
 {
-    VideoInfoFetcher::fetchFirstFrameWithVideoUrl(url, [=] (const QImage &coverImage) {
-        auto rowCount = m_datas.count();
-        beginInsertRows(QModelIndex(), rowCount, rowCount);
+    QList<QString> urlArr = urls.split(",");
+
+    auto rowCount = m_datas.count();
+
+    beginInsertRows(QModelIndex(), rowCount, rowCount + urlArr.count() - 1);
+
+    int coverImageCount = 0;
+
+    foreach(QString url, urlArr) {
         QString urlFileName = fileName(url);
 
-        QString coverDirPath = QDir::currentPath() + "/cover_image";
-        QDir dir;
-        if (!dir.exists(coverDirPath)) {
-            dir.mkdir(coverDirPath);
-        }
-        QString coverImageFilePath = QDir::currentPath() + "/cover_image/" + urlFileName + ".jpg";
-        coverImage.save(coverImageFilePath, "jpg", -1);
+        VideoInfoFetcher::fetchFirstFrameWithVideoUrl(url, [=, &coverImageCount] (const QImage &coverImage) {
+            QString coverDirPath = QDir::currentPath() + "/cover_image";
+            QDir dir;
+            if (!dir.exists(coverDirPath)) {
+                dir.mkdir(coverDirPath);
+            }
+            QString coverImageFilePath = QDir::currentPath() + "/cover_image/" + urlFileName + ".jpg";
+            coverImage.save(coverImageFilePath, "jpg", -1);
 
-        // NOTE: 加上前缀 "file://" 可通过本地文件的方式加载，默认 "qrc://" 方式找图
-        auto asset = QSharedPointer<VideoAsset>(new VideoAsset(urlFileName, url, "file://" + coverImageFilePath));
-        m_datas.append(asset);
-        endInsertRows();
+            // NOTE: 加上前缀 "file://" 可通过本地文件的方式加载，默认 "qrc://" 方式找图
+            auto asset = QSharedPointer<VideoAsset>(new VideoAsset(urlFileName, url, "file://" + coverImageFilePath));
+            m_datas.append(asset);
 
-        storeAssets();
-    });
+            coverImageCount += 1;
+            if (coverImageCount == urlArr.count() - 1) {
+               storeAssets();
+               endInsertRows();
+            }
+        });
+    }
 }
 
 /// 通过 url 获取资源名
@@ -42,7 +55,11 @@ QString VideoAssetModel::fileName(const QString urlString) {
 
 void VideoAssetModel::removeVideo(int index)
 {
+    beginRemoveRows(QModelIndex(), index, index);
+    m_datas.removeAt(index);
+    endRemoveRows();
 
+    storeAssets();
 }
 
 void VideoAssetModel::loadAssets()

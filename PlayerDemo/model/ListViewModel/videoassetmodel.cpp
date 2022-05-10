@@ -13,7 +13,12 @@ VideoAssetModel::VideoAssetModel(QObject *parent)
 
 void VideoAssetModel::addVideos(const QString &urls)
 {
-    QList<QString> urlArr = urls.split(",");
+    QList<QString> urlArr = QList<QString>();
+    urlArr.append(urls);
+
+    if (urls.contains(",")) {
+        urlArr = urls.split(",");
+    }
 
     auto rowCount = m_datas.count();
 
@@ -38,7 +43,7 @@ void VideoAssetModel::addVideos(const QString &urls)
             m_datas.append(asset);
 
             coverImageCount += 1;
-            if (coverImageCount == urlArr.count() - 1) {
+            if ((coverImageCount == urlArr.count() - 1) || urlArr.count() == 1) {
                storeAssets();
                endInsertRows();
             }
@@ -78,6 +83,11 @@ void VideoAssetModel::loadAssets()
         }
         endInsertRows();
     }
+}
+
+QString VideoAssetModel::urlAt(int position)
+{
+    return m_datas.at(position)->url();
 }
 
 void VideoAssetModel::storeAssets() {

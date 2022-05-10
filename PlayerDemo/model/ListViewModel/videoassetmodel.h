@@ -19,6 +19,7 @@ public:
     Q_INVOKABLE void addVideos(const QString &urls);
     Q_INVOKABLE void removeVideo(int index);
     Q_INVOKABLE void loadAssets();
+    Q_INVOKABLE QString urlAt(int position);
 
     int rowCount(const QModelIndex &parent = QModelIndex()) const override;
 

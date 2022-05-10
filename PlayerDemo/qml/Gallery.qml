@@ -129,7 +129,6 @@ Rectangle {
                 MouseArea {
                     anchors.fill: parent
                     onClicked: {
-                        console.log(mouseMenu.cellIndex)
                         videoModel.removeVideo(mouseMenu.cellIndex)
                         mouseMenu.visible = false
                     }
@@ -144,6 +143,15 @@ Rectangle {
                 anchors.leftMargin: 10
                 anchors.topMargin: 10
                 anchors.top: deleteItem.bottom
+
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        videoModel.addVideos(videoModel.urlAt(mouseMenu.cellIndex))
+                        mouseMenu.visible = false
+                        console.log(videoModel.urlAt(mouseMenu.cellIndex))
+                    }
+                }
             }
         }
     }

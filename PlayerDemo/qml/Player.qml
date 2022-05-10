@@ -55,6 +55,14 @@ Rectangle {
                 video.pause()
             }
         }
+        onPreButtonClicked: {
+            video.position -= 3000
+            controlBarTimer.stop()
+        }
+        onNextButtonClicked: {
+            video.position += 3000
+            controlBarTimer.stop()
+        }
     }
 
     Timer {

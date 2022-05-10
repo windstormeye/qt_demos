@@ -4,6 +4,8 @@ import Qt5Compat.GraphicalEffects
 
 Rectangle {
     signal playButtonClicked()
+    signal preButtonClicked()
+    signal nextButtonClicked()
 
     /// 是否播放
     property bool isPlay: false
@@ -77,6 +79,13 @@ Rectangle {
                         color: "white"
                     }
                 }
+
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        preButtonClicked()
+                    }
+                }
             }
 
             Rectangle {
@@ -129,6 +138,13 @@ Rectangle {
                         anchors.fill: nextButtonImg
                         source: nextButtonImg
                         color: "white"
+                    }
+                }
+
+                MouseArea {
+                    anchors.fill: parent
+                    onClicked: {
+                        nextButtonClicked()
                     }
                 }
             }

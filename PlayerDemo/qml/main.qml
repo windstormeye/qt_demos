@@ -1,36 +1,35 @@
 import QtQuick
-//import "./qml"
 
 Window {
     width: 640
-    height: 480
+    height: 400
     visible: true
     title: qsTr("VideoEditorPlayer")
     color: "black"
+    minimumWidth: 640
+    minimumHeight: 400
 
-
-    Row {
-        anchors.fill: parent
+    Player {
+        id: player
+        height: parent
+        anchors.top: parent.top
+        anchors.bottom: parent.bottom
+        anchors.right: gallery.left
+        anchors.left: parent.left
+        anchors.rightMargin: 10
         anchors.margins: 10
-        spacing: 10
+    }
 
-        Player {
-            id: player
-            width: parent.width * 0.7
-            height: parent
-            anchors.top: parent.top
-            anchors.bottom: parent.bottom
-        }
-
-        Gallery {
-            id: gallery
-            width: parent.width * 0.3 - 10
-            height: parent
-            anchors.top: parent.top
-            anchors.bottom: parent.bottom
-            onSelectedVideo:(videoUrl) => {
-                player.playWithVideoUrl(videoUrl)
-            }
+    Gallery {
+        id: gallery
+        width: 175
+        height: parent
+        anchors.top: parent.top
+        anchors.bottom: parent.bottom
+        anchors.right: parent.right
+        anchors.margins: 10
+        onSelectedVideo:(videoUrl) => {
+            player.playWithVideoUrl(videoUrl)
         }
     }
 }

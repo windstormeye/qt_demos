@@ -60,9 +60,6 @@ Rectangle {
         }
     }
 
-    //TODO: 这种方式是为什么呢？
-//    required property VideoAssetModel videoModel: VideoAssetModel{}
-
     VideoAssetModel {
         id: videoModel
     }

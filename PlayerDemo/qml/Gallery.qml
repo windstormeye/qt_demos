@@ -106,6 +106,9 @@ Rectangle {
         Component.onCompleted: {
             videoModel.loadAssets()
         }
+        onContentYChanged: {
+            mouseMenu.visible = false
+        }
 
         DropArea {
             anchors.fill: parent
@@ -164,8 +167,15 @@ Rectangle {
                     onClicked: {
                         videoModel.addVideos(videoModel.urlAt(mouseMenu.cellIndex))
                         mouseMenu.visible = false
-                        console.log(videoModel.urlAt(mouseMenu.cellIndex))
                     }
+                }
+            }
+
+            MouseArea {
+                anchors.fill: parent
+                hoverEnabled: true
+                onExited: {
+                    mouseMenu.visible = false
                 }
             }
         }

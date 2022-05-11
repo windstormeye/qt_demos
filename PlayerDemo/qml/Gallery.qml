@@ -53,8 +53,23 @@ Rectangle {
                                        selectedVideo(asset.url)
                                    }
                                    if (mouse.button === Qt.RightButton) {
-                                       mouseMenu.x = mouseX
-                                       mouseMenu.y = mouseY
+                                       var adjustX = 0
+                                       var adjustY = 0
+                                       if (index % 2) {
+                                           // 第二列
+                                           adjustX = index % 2 * listView.cellWidth
+                                       }
+                                       if (index / 2) {
+                                           adjustY = index / 2 * listView.cellHeight
+
+                                           if (index % 2) {
+                                               // 第二列
+                                               adjustY = (index - 1) / 2 * listView.cellHeight
+                                           }
+                                       }
+
+                                       mouseMenu.x = adjustX + mouseX
+                                       mouseMenu.y = adjustY + mouseY - listView.contentY
                                        mouseMenu.visible = true
                                        mouseMenu.cellIndex = index
                                    }

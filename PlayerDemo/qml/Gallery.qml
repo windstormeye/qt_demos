@@ -47,6 +47,7 @@ Rectangle {
                 MouseArea {
                     width: listView.cellWidth
                     height: listView.cellHeight
+                    hoverEnabled: true
                     acceptedButtons: Qt.LeftButton | Qt.RightButton
                     onClicked: (mouse) => {
                                    if (mouse.button === Qt.LeftButton) {
@@ -68,12 +69,15 @@ Rectangle {
                                            }
                                        }
 
-                                       mouseMenu.x = adjustX + mouseX
-                                       mouseMenu.y = adjustY + mouseY - listView.contentY
+                                       mouseMenu.x = adjustX + mouseX - 10
+                                       mouseMenu.y = adjustY + mouseY - listView.contentY - 10
                                        mouseMenu.visible = true
                                        mouseMenu.cellIndex = index
                                    }
                                }
+                    onExited: {
+                        mouseMenu.visible = false
+                    }
                 }
             }
 
@@ -91,7 +95,7 @@ Rectangle {
 
     GridView {
         id: listView
-        property var marginValue: 10
+        property int marginValue: 10
 
         anchors.fill: parent
         cellWidth: parent.width / 2 - marginValue / 2
@@ -168,14 +172,6 @@ Rectangle {
                         videoModel.addVideos(videoModel.urlAt(mouseMenu.cellIndex))
                         mouseMenu.visible = false
                     }
-                }
-            }
-
-            MouseArea {
-                anchors.fill: parent
-                hoverEnabled: true
-                onExited: {
-                    mouseMenu.visible = false
                 }
             }
         }

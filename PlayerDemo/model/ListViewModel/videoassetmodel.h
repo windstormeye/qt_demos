@@ -6,9 +6,6 @@
 
 #include "../VideoAsset/videoasset.h"
 
-//#include "videoassetmodel.h"
-// TODO: 打开这个头文件后
-
 class VideoAssetModel : public QAbstractListModel
 {
     Q_OBJECT

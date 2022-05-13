@@ -21,6 +21,7 @@ bool VideoInfoFetcher::fetchFirstFrameWithVideoUrl(const QString &url, std::func
         if (frame.isValid()) {
             player->stop();
             callback(frame.toImage());
+            delete player;
         }
     }, Qt::QueuedConnection);
 

@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/qmls">
+        <file>Qmls/main.qml</file>
+    </qresource>
+    <qresource prefix="/imgs"/>
+</RCC>

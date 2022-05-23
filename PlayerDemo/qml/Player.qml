@@ -22,6 +22,7 @@ Rectangle {
         onPlaybackStateChanged: {
             if (video.playbackState === MediaPlayer.StoppedState) {
                 controlBar.visible = false
+                video.play()
             }
         }
 

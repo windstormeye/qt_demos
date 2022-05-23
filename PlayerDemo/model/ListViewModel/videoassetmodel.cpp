@@ -39,7 +39,12 @@ void VideoAssetModel::addVideos(const QString &urls)
             coverImage.save(coverImageFilePath, "jpg", -1);
 
             // NOTE: 加上前缀 "file://" 可通过本地文件的方式加载，默认 "qrc://" 方式找图
-            auto asset = QSharedPointer<VideoAsset>(new VideoAsset(urlFileName, url, "file://" + coverImageFilePath));
+            QString prefixFile = "file://";
+#ifdef Q_OS_WIN32
+            prefixFile = "file:";
+#endif
+
+            auto asset = QSharedPointer<VideoAsset>(new VideoAsset(urlFileName, url, QDir::toNativeSeparators(prefixFile + coverImageFilePath)));
             m_datas.append(asset);
 
             coverImageCount += 1;

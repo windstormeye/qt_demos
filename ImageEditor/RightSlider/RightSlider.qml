@@ -3,7 +3,6 @@ import Qt5Compat.GraphicalEffects
 
 Rectangle {
     color: Qt.rgba(50/255, 50/255, 50/255, 1)
-    anchors.margins: 10
 
 
 //    OpacityMask {

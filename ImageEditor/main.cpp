@@ -15,5 +15,7 @@ int main(int argc, char *argv[])
     }, Qt::QueuedConnection);
     engine.load(url);
 
+    QCoreApplication::setOrganizationName("com.pjhubs.image_editor");
+
     return app.exec();
 }

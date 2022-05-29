@@ -1,9 +1,11 @@
 import QtQuick
+import Qt.labs.platform 1.1
 
 import "ImageShower"
 import "ImageBrowser"
 import "RightSlider"
 import "DrapHighlight"
+import "BlankView"
 
 Window {
     width: 900
@@ -22,6 +24,7 @@ Window {
         anchors.leftMargin: 10
         anchors.rightMargin: 10
         anchors.bottomMargin: 10
+        visible: imageBrowser.modelCounts > 0
     }
 
     ImageBrowser {
@@ -33,6 +36,7 @@ Window {
         anchors.leftMargin: 10
         anchors.bottomMargin: 10
         anchors.rightMargin: 10
+        visible: imageBrowser.modelCounts > 0
     }
 
     RightSlider {
@@ -44,6 +48,7 @@ Window {
         anchors.rightMargin: 10
         anchors.topMargin: 10
         anchors.bottomMargin: 10
+        visible: imageBrowser.modelCounts > 0
     }
 
 
@@ -51,6 +56,25 @@ Window {
         id: drapHighlight
         anchors.fill: parent
         visible: false
+    }
+
+    BlankView {
+        id: blankView
+        anchors.fill: parent
+        visible: imageBrowser.modelCounts == 0
+        onClicked: {
+            fileDialog.open()
+        }
+    }
+
+    FileDialog {
+        id: fileDialog
+        nameFilters: [ "Image files (*.jpg *.png *jpeg)"]
+        acceptLabel: "选择"
+        fileMode: FileDialog.OpenFiles
+        onAccepted: {
+            imageBrowser.viewModel.addImageAssetWithUrl(fileDialog.files)
+        }
     }
 
     // ----- Gesture ------

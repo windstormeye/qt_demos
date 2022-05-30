@@ -1,16 +1,14 @@
 import QtQuick 2.0
-import Qt5Compat.GraphicalEffects
+import com.pjhubs.image_editor
 
 Rectangle {
+    property ImageAsset imageModel: null
+
     color: Qt.rgba(50/255, 50/255, 50/255, 1)
-    anchors.margins: 10
 
-
-//    OpacityMask {
-//        id: mask
-//        width: parent.width
-//        height: coverImg.height
-//        source: coverImg
-//        maskSource: coverContainer
-//    }
+    Image {
+        id: currentImage
+        source: imageModel ? imageModel.fileUrl : ""
+        anchors.fill: parent
+    }
 }

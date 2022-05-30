@@ -2,12 +2,12 @@ import QtQuick 2.0
 import com.pjhubs.image_editor 1.0
 
 Rectangle {
-    id: root
     property real modelCounts: 0
+    property ImageAsset currentImageAsset: null
     property ImageBrowserViewModel viewModel: null
 
+    id: root
     color: "black"
-
 
     ImageBrowserViewModel {
         id: vm
@@ -17,28 +17,40 @@ Rectangle {
         }
     }
 
-    Rectangle {
-        id: item0
-        width: 80
-        anchors.top: parent.top
-        anchors.bottom: parent.bottom
-        anchors.left: parent.left
-        color: "gray"
+    Component {
+        id: item
+        Rectangle {
+            width: gridView.cellWidth
+            height: gridView.cellHeight
+            ImageBrowserItemView {
+                id: itemView
+                coverUrl: asset.fileUrl
+            }
+        }
     }
 
-    Rectangle {
-        width: 80
-        anchors.top: parent.top
-        anchors.bottom: parent.bottom
-        anchors.left: item0.right
-        anchors.leftMargin: 10
-        color: "gray"
+    GridView {
+        id: gridView
+        model: viewModel
+        delegate: item
+        cellWidth: 80
+        cellHeight: gridView.height
+        anchors.fill: parent
+
     }
 
     Connections{
         target: viewModel
         function onDataUpdated() {
             modelCounts = vm.rowCount()
+
+            if (!currentImageAsset) {
+                let model = viewModel.modelAt(0)
+                if (model) {
+                    currentImageAsset = model;
+                }
+            }
+
         }
     }
 }

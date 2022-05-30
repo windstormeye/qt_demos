@@ -10,7 +10,7 @@ ImageBrowserViewModel::ImageBrowserViewModel(QObject *parent)
 
 void ImageBrowserViewModel::addImageAssetWithUrl(const QVariantList &urls)
 {
-    beginInsertRows(QModelIndex(), 0, m_datas.count() + urls.count() - 1);
+    beginInsertRows(QModelIndex(), m_datas.count(), m_datas.count() + urls.count() - 1);
 
     foreach(QVariant url, urls) {
         QString urlString = url.toString();
@@ -19,11 +19,14 @@ void ImageBrowserViewModel::addImageAssetWithUrl(const QVariantList &urls)
         m_datas.append(asset);
     }
 
-    qDebug() << m_datas.count();
-
-     emit dataUpdated();
-
     endInsertRows();
+
+    emit dataUpdated();
+}
+
+QVariant ImageBrowserViewModel::modelAt(int index)
+{
+    return QVariant::fromValue(m_datas.at(index).data());
 }
 
 int ImageBrowserViewModel::rowCount(const QModelIndex &parent) const

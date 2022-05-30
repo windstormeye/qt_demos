@@ -2,6 +2,7 @@
 #include <QQmlApplicationEngine>
 
 #include "./ImageBrowser/imagebrowserviewmodel.h"
+#include "./Models/ImageAsset/imageasset.h"
 
 int main(int argc, char *argv[])
 {
@@ -10,6 +11,7 @@ int main(int argc, char *argv[])
     QQmlApplicationEngine engine;
 
     qmlRegisterType<ImageBrowserViewModel>("com.pjhubs.image_editor", 1, 0, "ImageBrowserViewModel");
+    qmlRegisterType<ImageAsset>("com.pjhubs.image_editor", 1, 0, "ImageAsset");
 
     const QUrl url(u"qrc:/ImageEditor/main.qml"_qs);
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,

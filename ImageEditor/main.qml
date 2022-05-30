@@ -20,11 +20,9 @@ Window {
         anchors.right: rightSlider.left
         anchors.top: parent.top
         anchors.bottom: imageBrowser.top
-        anchors.topMargin: 10
-        anchors.leftMargin: 10
-        anchors.rightMargin: 10
-        anchors.bottomMargin: 10
+        anchors.margins: 10
         visible: imageBrowser.modelCounts > 0
+        imageModel: imageBrowser.currentImageAsset
     }
 
     ImageBrowser {

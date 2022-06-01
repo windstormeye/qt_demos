@@ -5,6 +5,7 @@ Rectangle {
     property real modelCounts: 0
     property ImageAsset currentImageAsset: null
     property ImageBrowserViewModel viewModel: null
+    property var currentSelectedBox: null
 
     id: root
     color: "black"
@@ -22,9 +23,27 @@ Rectangle {
         Rectangle {
             width: gridView.cellWidth
             height: gridView.cellHeight
+            border.color: "white"
+            border.width: 1
+
             ImageBrowserItemView {
                 id: itemView
                 coverUrl: asset.fileUrl
+                onSelected: (selectedBox, imgUrl) => {
+                                if (selectedBox === root.currentSelectedBox) {
+                                    return
+                                }
+                                if (root.currentSelectedBox) {
+                                    root.currentSelectedBox.visible = false
+                                }
+                                root.currentSelectedBox = selectedBox
+                                selectedBox.visible = true
+
+                                let model = viewModel.modelAt(index)
+                                if (model) {
+                                    currentImageAsset = model;
+                                }
+                            }
             }
         }
     }

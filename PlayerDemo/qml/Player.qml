@@ -32,6 +32,7 @@ Rectangle {
             onPositionChanged: {
                 if (video.playbackState === MediaPlayer.PlayingState) {
                     controlBar.visible = true
+                    // NOTE: infinite play video
                     controlBarTimer.start()
                 }
             }

@@ -4,11 +4,12 @@ import com.pjhubs.image_editor
 Rectangle {
     property ImageAsset imageModel: null
 
-    color: Qt.rgba(50/255, 50/255, 50/255, 1)
+    color: "black"
 
     Image {
         id: currentImage
         source: imageModel ? imageModel.fileUrl : ""
         anchors.fill: parent
+        fillMode: Image.PreserveAspectFit
     }
 }

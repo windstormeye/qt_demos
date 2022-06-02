@@ -8,11 +8,13 @@ import "DrapHighlight"
 import "BlankView"
 
 Window {
-    width: 900
-    height: 500
+    width: 1200
+    height: 700
     visible: true
     title: qsTr("图片编辑器")
     color: "black"
+    minimumHeight: 500
+    minimumWidth: 900
 
 
     ImageShower {

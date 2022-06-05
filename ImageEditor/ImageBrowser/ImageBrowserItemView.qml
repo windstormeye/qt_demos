@@ -2,6 +2,7 @@ import QtQuick 2.0
 
 Rectangle {
     signal selected(var selectedBox)
+    signal selectedBoxComplated(var selectedBox)
 
     property string coverUrl: ""
     property bool isSelected: false
@@ -26,6 +27,9 @@ Rectangle {
         radius: 1
         color: "transparent"
         visible: isSelected
+        Component.onCompleted: {
+            root.selectedBoxComplated(selectedBox)
+        }
     }
 
     MouseArea {

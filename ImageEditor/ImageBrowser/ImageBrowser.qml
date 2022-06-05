@@ -30,6 +30,7 @@ Rectangle {
                 id: itemView
                 coverUrl: asset.fileUrl
                 onSelected: (selectedBox, imgUrl) => {
+                                // change selected box visible status when mouse left button clicked.
                                 if (selectedBox === root.currentSelectedBox) {
                                     return
                                 }
@@ -44,6 +45,13 @@ Rectangle {
                                     currentImageAsset = model;
                                 }
                             }
+                onSelectedBoxComplated: (selectedBox) => {
+                                            // default select import first images when init time.
+                                            if (index === 0) {
+                                                root.currentSelectedBox = selectedBox
+                                                selectedBox.visible = true
+                                            }
+                }
             }
         }
     }

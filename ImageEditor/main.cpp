@@ -3,6 +3,7 @@
 
 #include "./ImageBrowser/imagebrowserviewmodel.h"
 #include "./Models/ImageAsset/imageasset.h"
+#include "./Tools/ImageProvider/localimageprovider.h"
 
 int main(int argc, char *argv[])
 {
@@ -12,6 +13,9 @@ int main(int argc, char *argv[])
 
     qmlRegisterType<ImageBrowserViewModel>("com.pjhubs.image_editor", 1, 0, "ImageBrowserViewModel");
     qmlRegisterType<ImageAsset>("com.pjhubs.image_editor", 1, 0, "ImageAsset");
+
+    LocalImageProvider *localImageProvider = new LocalImageProvider(QQmlImageProviderBase::Image);
+    engine.addImageProvider("localImageProvider", localImageProvider);
 
     const QUrl url(u"qrc:/ImageEditor/main.qml"_qs);
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,

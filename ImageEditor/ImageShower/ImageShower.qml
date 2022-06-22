@@ -8,7 +8,7 @@ Rectangle {
 
     Image {
         id: currentImage
-        source: imageModel ? imageModel.fileUrl : ""
+        source: imageModel ? "image://localImageProvider/" + imageModel.fileUrl : ""
         anchors.fill: parent
         fillMode: Image.PreserveAspectFit
     }

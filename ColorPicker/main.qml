@@ -184,7 +184,18 @@ Window {
 
             onEditingFinished: {
                 let inputString = hexColortextInput.text
-                hexColor(inputString)
+
+                let rHex = inputString.substr(0, 2)
+                let gHex = inputString.substr(2, 2)
+                let bHex = inputString.substr(4, 2)
+
+                let r = parseInt(rHex, 16) / 255.0
+                let g = parseInt(gHex, 16) / 255.0
+                let b = parseInt(bHex, 16) / 255.0
+
+                updateColorWithRGB(r, g, b)
+                console.log(rHex + " " + gHex + " " + bHex)
+                console.log(r + " " + g + " " + b)
             }
         }
     }
@@ -213,17 +224,7 @@ Window {
 
             onEditingFinished: {
                 let currentValue = parseInt(rInput.text)
-
-                highlightColor.color = Qt.rgba(currentValue / 255.0, pickColorItem.color.g, pickColorItem.color.b)
-                pickColorItem.color = highlightColor.color
-
-                colorPicker.mainHue = pickColorItem.color.hslHue
-                if (!equalHighlightColor()) {
-                    colorSliderItem.color = Qt.hsva(highlightColor.color.hsvHue, 1, 1)
-                }
-
-                updateColorItemsPosition()
-                updateHexColorString()
+                updateColorWithRGB(currentValue, pickColorItem.color.g, pickColorItem.color.b)
             }
         }
     }
@@ -252,17 +253,7 @@ Window {
 
             onEditingFinished: {
                 let currentValue = parseInt(gInput.text)
-
-                highlightColor.color = Qt.rgba(pickColorItem.color.r, currentValue / 255.0, pickColorItem.color.b)
-                pickColorItem.color = highlightColor.color
-
-                colorPicker.mainHue = pickColorItem.color.hslHue
-                if (!equalHighlightColor()) {
-                    colorSliderItem.color = Qt.hsva(highlightColor.color.hsvHue, 1, 1)
-                }
-
-                updateColorItemsPosition()
-                updateHexColorString()
+                updateColorWithRGB(pickColorItem.color.r, currentValue, pickColorItem.color.b)
             }
         }
     }
@@ -290,18 +281,8 @@ Window {
             validator: RegularExpressionValidator { regularExpression: /[0-9A-F]{1,3}+/ }
 
             onEditingFinished: {
-                let currentValue = parseInt(bInput.text)
-
-                highlightColor.color = Qt.rgba(pickColorItem.color.r, pickColorItem.color.g, currentValue / 255.0)
-                pickColorItem.color = highlightColor.color
-
-                colorPicker.mainHue = pickColorItem.color.hslHue
-                if (!equalHighlightColor()) {
-                    colorSliderItem.color = Qt.hsva(highlightColor.color.hsvHue, 1, 1)
-                }
-
-                updateColorItemsPosition()
-                updateHexColorString()
+                let currentValue = parseInt(bInput.text) / 255.0
+                updateColorWithRGB(pickColorItem.color.r, pickColorItem.color.g, currentValue)
             }
         }
     }
@@ -464,7 +445,18 @@ Window {
         }
 
         hexColortextInput.text = rHex + gHex + bHex
+    }
 
-        console.log(rHex + " " + gHex + " " + bHex)
+    function updateColorWithRGB(r, g, b) {
+        highlightColor.color = Qt.rgba(r, g, b)
+        pickColorItem.color = highlightColor.color
+
+        colorPicker.mainHue = pickColorItem.color.hslHue
+        if (!equalHighlightColor()) {
+            colorSliderItem.color = Qt.hsva(highlightColor.color.hsvHue, 1, 1)
+        }
+
+        updateColorItemsPosition()
+        updateHexColorString()
     }
 }

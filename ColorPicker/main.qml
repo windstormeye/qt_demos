@@ -9,11 +9,12 @@ Window {
 
     Rectangle {
         // 色板
-        property int rColor: maxColorValue
+        property int rColor: 255.0
         property int gColor: 0
         property int bColor: 0
         property int maxColorValue: 255.0
         property real previousScale: 0
+        property real mainHue: 0
 
         id: colorPicker
         width: 262
@@ -101,7 +102,7 @@ Window {
                         let adjustPos = mapToItem(colorPicker, mouseX, mouseY)
                         pickColorItem.x = adjustPos.x
                         pickColorItem.y = adjustPos.y
-
+                        // 边界限制
                         if (pickColorItem.y + pickColorItem.width / 2 > colorPicker.height + colorPicker.y) {
                             pickColorItem.y = colorPicker.y + colorPicker.height - pickColorItem.width / 2
                         }
@@ -116,34 +117,28 @@ Window {
                         }
                     }
 
-                    var mainColorProgress = (pickColorItem.x + pickColorItem.width / 2 - colorPicker.x) / colorPicker.width
-                    var darkColorProgress = (pickColorItem.y + pickColorItem.height / 2 - colorPicker.y) / colorPicker.height
+                    // 饱和度限制
+                    var saturaionValue = (pickColorItem.x + pickColorItem.width / 2 - colorPicker.x) / colorPicker.width
+                    // 亮度限制
+                    var lightness = (pickColorItem.y + pickColorItem.height / 2 - colorPicker.y) / colorPicker.height
 
-                    mainColorProgress = Math.min(mainColorProgress, 1)
-                    mainColorProgress = Math.max(mainColorProgress, 0)
+                    saturaionValue = Math.min(saturaionValue, 1)
+                    saturaionValue = Math.max(saturaionValue, 0)
 
-                    darkColorProgress = Math.min(darkColorProgress, 1)
-                    darkColorProgress = Math.max(darkColorProgress, 0)
+                    lightness = Math.min(lightness, 1)
+                    lightness = Math.max(lightness, 0)
 
-                    // 距白值
-                    let offsetWR = (1 - colorSliderItem.color.r) * (1 - mainColorProgress)
-                    let offsetWG = (1 - colorSliderItem.color.g) * (1 - mainColorProgress)
-                    let offsetWB = (1 - colorSliderItem.color.b) * (1 - mainColorProgress)
-                    // 距黑值
-                    let offsetBR = colorSliderItem.color.r * darkColorProgress
-                    let offsetBG = colorSliderItem.color.g * darkColorProgress
-                    let offsetBB = colorSliderItem.color.b * darkColorProgress
+                    let s = saturaionValue
+                    let l = (1 - lightness)
+                    highlightColor.color = Qt.hsva(colorPicker.mainHue, s, l)
+                    pickColorItem.color = highlightColor.color
 
-                    let adjustR = colorSliderItem.color.r - offsetBR + offsetWR * (1 - darkColorProgress)
-                    let adjustG = colorSliderItem.color.g - offsetBG + offsetWG * (1 - darkColorProgress)
-                    let adjustB = colorSliderItem.color.b - offsetBB + offsetWB * (1 - darkColorProgress)
-
-                    pickColorItem.color = Qt.rgba(adjustR, adjustG, adjustB)
+                    updateHexColorString()
                 }
             }
             onReleased: {
                 isTouchMouse = false
-                colorPicker.maxColorValue = 255.0
+                colorPicker.maxColorValue = Math.max(Math.max(pickColorItem.color.r, pickColorItem.color.g), pickColorItem.color.b) * 255.0
             }
         }
     }
@@ -218,46 +213,17 @@ Window {
 
             onEditingFinished: {
                 let currentValue = parseInt(rInput.text)
-                let r = currentValue
-                let g = Math.floor(pickColorItem.color.g * 255.0)
-                let b = Math.floor(pickColorItem.color.b * 255.0)
-                // 拿出当前最大色值
-                let maxColorValue = Math.max(Math.max(r, g), b)
-                // 算出与 255 偏移量
-                let offsetColorValue = 255 - maxColorValue
-                // 值填充至 255
-                let adjustR = r + offsetColorValue
-                let adjustG = g + offsetColorValue
-                let adjustB = b + offsetColorValue
-                // 找出属于的主色区
-                let isFullR = (adjustR === 255)
-                let isFullG = (adjustG === 255)
-                let isFullB = (adjustB === 255)
 
-                console.log(isFullR + ", " + isFullG + ", " + isFullB)
-                let colorItemWidth = 1/6.0
-                if (isFullR && !isFullG && !isFullB) {
-                    // 算出 progress
-                    let progress = pickColorItem.color.g * colorItemWidth
-                    colorSliderItem.x = colorSlider.width + colorSlider.x + progress * colorSlider.width
-                } else if (isFullR && isFullG && !isFullB) {
+                highlightColor.color = Qt.rgba(currentValue / 255.0, pickColorItem.color.g, pickColorItem.color.b)
+                pickColorItem.color = highlightColor.color
 
-                } else if (!isFullR && isFullG && !isFullB) {
-
-                } else if (!isFullR && isFullG && isFullB) {
-
-                } else if (!isFullR && !isFullG && isFullB) {
-
-                } else if (isFullR && !isFullG && isFullB) {
-
-                } else if (isFullR && !isFullG && !isFullB) {
-
+                colorPicker.mainHue = pickColorItem.color.hslHue
+                if (!equalHighlightColor()) {
+                    colorSliderItem.color = Qt.hsva(highlightColor.color.hsvHue, 1, 1)
                 }
 
-
-                pickColorItemMouse.isOtherTouchMouse = true
-                colorPicker.maxColorValue = Math.max(Math.max(currentValue, g), b)
-                console.log(colorPicker.maxColorValue)
+                updateColorItemsPosition()
+                updateHexColorString()
             }
         }
     }
@@ -286,44 +252,17 @@ Window {
 
             onEditingFinished: {
                 let currentValue = parseInt(gInput.text)
-                let r = Math.floor(pickColorItem.color.r * 255.0)
-                let g = currentValue
-                let b = Math.floor(pickColorItem.color.b * 255.0)
-                // 拿出当前最小色值
-                let maxColorValue = Math.min(Math.min(r, g), b)
-                // 算出与 255 偏移量
-                let offsetColorValue = 255 - maxColorValue
-                // 值填充至 255
-                let adjustR = r + offsetColorValue
-                let adjustG = g + offsetColorValue
-                let adjustB = b + offsetColorValue
-                // 找出属于的主色区
-                let isFullR = (adjustR > 255)
-                let isFullG = (adjustG > 255)
-                let isFullB = (adjustB > 255)
 
-                console.log(isFullR + ", " + isFullG + ", " + isFullB)
-                let colorItemWidth = 1/7.0
-                if (isFullR && !isFullG && !isFullB) {
-                    // 算出 progress
+                highlightColor.color = Qt.rgba(pickColorItem.color.r, currentValue / 255.0, pickColorItem.color.b)
+                pickColorItem.color = highlightColor.color
 
-                } else if (isFullR && isFullG && !isFullB) {
-                    console.log(g)
-                    let progress = g / 255.0 * colorItemWidth
-                    colorSliderItem.x = colorSlider.x + progress * colorSlider.width
-                } else if (!isFullR && isFullG && !isFullB) {
-
-                } else if (!isFullR && isFullG && isFullB) {
-
-                } else if (!isFullR && !isFullG && isFullB) {
-
-                } else if (isFullR && !isFullG && isFullB) {
-
-                } else if (isFullR && !isFullG && !isFullB) {
-
+                colorPicker.mainHue = pickColorItem.color.hslHue
+                if (!equalHighlightColor()) {
+                    colorSliderItem.color = Qt.hsva(highlightColor.color.hsvHue, 1, 1)
                 }
 
-                colorSliderMouse.positionChanged(0)
+                updateColorItemsPosition()
+                updateHexColorString()
             }
         }
     }
@@ -352,22 +291,24 @@ Window {
 
             onEditingFinished: {
                 let currentValue = parseInt(bInput.text)
-                if (currentValue > colorPicker.maxColorValue) {
-                    colorPicker.maxColorValue = currentValue
-                    pickColorItemMouse.isOtherTouchMouse = true
 
+                highlightColor.color = Qt.rgba(pickColorItem.color.r, pickColorItem.color.g, currentValue / 255.0)
+                pickColorItem.color = highlightColor.color
 
-
-
-
-                    pickColorItemMouse.isOtherTouchMouse = false
-                    console.log(colorPicker.maxColorValue)
+                colorPicker.mainHue = pickColorItem.color.hslHue
+                if (!equalHighlightColor()) {
+                    colorSliderItem.color = Qt.hsva(highlightColor.color.hsvHue, 1, 1)
                 }
+
+                updateColorItemsPosition()
+                updateHexColorString()
             }
         }
     }
 
     Rectangle {
+        property real colorItemWidth: 1/7.0
+
         id: colorSlider
         width: 200
         height: 14
@@ -453,39 +394,77 @@ Window {
                   colorSliderItem.x = adjustX + colorSlider.x
               }
 
-                // 色杆进度
-                var progress = (colorSliderItem.x - colorSlider.x) / (colorSlider.width - colorSliderItem.width)
-                let colorItemWidth = 1/6.0
+              // 色杆进度
+              var progress = (colorSliderItem.x - colorSlider.x) / (colorSlider.width - colorSliderItem.width)
 
-                if (progress >= 0 && progress <= 1/6.0) {
-                    let adjustProgress = progress / colorItemWidth
-                    colorSliderItem.color = Qt.rgba(1, adjustProgress, 0, 1)
-                } else if (progress > colorItemWidth && progress <= colorItemWidth * 2) {
-                    let adjustProgress = (progress - colorItemWidth) / colorItemWidth
-                    colorSliderItem.color = Qt.rgba(1 - adjustProgress, 1, 0, 1)
-                } else if (progress > colorItemWidth * 2 && progress <= colorItemWidth * 3) {
-                    let adjustProgress = (progress - colorItemWidth * 2) / colorItemWidth
-                    colorSliderItem.color = Qt.rgba(0, 1, adjustProgress, 1)
-                } else if (progress > colorItemWidth * 3 && progress <= colorItemWidth * 4) {
-                    let adjustProgress = (progress - colorItemWidth * 3) / colorItemWidth
-                    colorSliderItem.color = Qt.rgba(0, 1 - adjustProgress, 1, 1)
-                } else if (progress > colorItemWidth * 4 && progress <= colorItemWidth * 5) {
-                    let adjustProgress = (progress - colorItemWidth * 4) / colorItemWidth
-                    colorSliderItem.color = Qt.rgba(adjustProgress, 0, 1, 1)
-                } else if (progress > colorItemWidth * 5 && progress <= colorItemWidth * 6) {
-                    let adjustProgress = (progress - colorItemWidth * 5) / colorItemWidth
-                    colorSliderItem.color = Qt.rgba(1, 0, 1 - adjustProgress, 1)
-                }
-                colorPicker.rColor = colorSliderItem.color.r * 255.0
-                colorPicker.gColor = colorSliderItem.color.g * 255.0
-                colorPicker.bColor = colorSliderItem.color.b * 255.0
+              colorPicker.mainHue = progress
+              pickColorItemMouse.positionChanged(0)
 
-                pickColorItemMouse.positionChanged(0)
+              colorSliderItem.color = Qt.hsva(progress, 1, 1)
+              updateHexColorString()
+
+              colorPicker.rColor = colorSliderItem.color.r * 255.0
+              colorPicker.gColor = colorSliderItem.color.g * 255.0
+              colorPicker.bColor = colorSliderItem.color.b * 255.0
             }
             onReleased: {
                 isTouchMouse = false
                 pickColorItemMouse.isOtherTouchMouse = false
             }
         }
+    }
+
+    function updateColorItemsPosition() {
+        let h = highlightColor.color.hsvHue
+        let s = highlightColor.color.hsvSaturation
+        let v = highlightColor.color.hsvValue
+
+        let x = colorPicker.x
+        let y = colorPicker.y
+
+        pickColorItem.x = x + colorPicker.width * s - pickColorItem.width / 2
+        pickColorItem.y = y + colorPicker.height * (1 - v) - pickColorItem.height / 2
+
+        // 输入 0,0,0 || 255,255,255
+        if (highlightColor.color === Qt.color("white") ||
+                highlightColor.color === Qt.color("black") ||
+                equalHighlightColor()) {
+            return
+        }
+        colorSliderItem.x = h * colorSlider.width + colorSlider.x
+    }
+
+    function equalHighlightColor() {
+        if (highlightColor.color.r - highlightColor.color.g < 0.001 &&
+                highlightColor.color.r - highlightColor.color.b < 0.001 &&
+                highlightColor.color.b - highlightColor.color.g < 0.001) {
+            return true
+        }
+        return false
+    }
+
+    function updateHexColorString() {
+        let r = Math.floor(highlightColor.color.r * 255)
+        let g = Math.floor(highlightColor.color.g * 255)
+        let b = Math.floor(highlightColor.color.b * 255)
+
+        var rHex = (r).toString(16)
+        if (r < 16) {
+            rHex = "0" + rHex
+        }
+
+        var gHex = (g).toString(16)
+        if (g < 16) {
+            gHex = "0" + gHex
+        }
+
+        var bHex = (b).toString(16)
+        if (b < 16) {
+            bHex = "0" + bHex
+        }
+
+        hexColortextInput.text = rHex + gHex + bHex
+
+        console.log(rHex + " " + gHex + " " + bHex)
     }
 }

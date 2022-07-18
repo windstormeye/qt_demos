@@ -194,8 +194,6 @@ Window {
                 let b = parseInt(bHex, 16) / 255.0
 
                 updateColorWithRGB(r, g, b)
-                console.log(rHex + " " + gHex + " " + bHex)
-                console.log(r + " " + g + " " + b)
             }
         }
     }
